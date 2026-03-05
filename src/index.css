@@ -10,4 +10,98 @@
   body {
     @apply antialiased;
   }
+
+  /* Dark mode (default) */
+  .dark body,
+  .dark {
+    --bg-primary: #0f172a;
+    --bg-card: rgba(30, 41, 59, 0.5);
+    --bg-card-hover: rgba(51, 65, 85, 0.3);
+    --border-color: rgba(51, 65, 85, 0.5);
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+  }
+
+  /* Light mode */
+  .light body,
+  .light {
+    --bg-primary: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.8);
+    --bg-card-hover: rgba(241, 245, 249, 0.8);
+    --border-color: rgba(226, 232, 240, 0.8);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+  }
+
+  /* Light mode overrides for Tailwind classes */
+  .light .bg-slate-900 {
+    background-color: #f8fafc;
+  }
+
+  .light .bg-slate-800\/50 {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .light .border-slate-700\/50 {
+    border-color: rgba(226, 232, 240, 0.8);
+  }
+
+  .light .text-white {
+    color: #0f172a;
+  }
+
+  .light .text-slate-400 {
+    color: #475569;
+  }
+
+  .light .text-slate-500 {
+    color: #64748b;
+  }
+
+  .light .bg-slate-700\/50 {
+    background-color: rgba(241, 245, 249, 0.8);
+  }
+
+  .light .bg-slate-700\/30 {
+    background-color: rgba(241, 245, 249, 0.5);
+  }
+
+  .light .bg-slate-700\/20 {
+    background-color: rgba(241, 245, 249, 0.3);
+  }
+
+  .light .border-slate-600\/50 {
+    border-color: rgba(203, 213, 225, 0.8);
+  }
+
+  .light .border-slate-700\/30 {
+    border-color: rgba(226, 232, 240, 0.5);
+  }
+
+  .light .placeholder-slate-500::placeholder {
+    color: #94a3b8;
+  }
+
+  .light .hover\:bg-slate-700\/50:hover {
+    background-color: rgba(241, 245, 249, 0.8);
+  }
+
+  .light .hover\:bg-slate-700:hover {
+    background-color: #f1f5f9;
+  }
+
+  .light .hover\:text-slate-300:hover {
+    color: #334155;
+  }
+
+  .light .hover\:border-slate-600\/50:hover {
+    border-color: rgba(203, 213, 225, 0.8);
+  }
+
+  /* Smooth theme transition */
+  html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
 }

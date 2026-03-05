@@ -7,7 +7,7 @@ interface PriceChartProps {
   symbol: string;
 }
 
-export const PriceChart = ({ chartData, symbol }: PriceChartProps) => {
+export const PriceChart = ({ chartData }: PriceChartProps) => {
   const firstPrice = chartData[0]?.price || 0;
   const lastPrice = chartData[chartData.length - 1]?.price || 0;
   const isPositive = lastPrice >= firstPrice;
@@ -19,9 +19,8 @@ export const PriceChart = ({ chartData, symbol }: PriceChartProps) => {
           <h3 className="text-lg font-bold text-white mb-1">Price Action</h3>
           <p className="text-sm text-slate-400">6 Month Performance</p>
         </div>
-        <div className={`flex items-center gap-2 px-3 py-1 rounded-lg border ${
-          isPositive ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-red-500/10 border-red-500/20'
-        }`}>
+        <div className={`flex items-center gap-2 px-3 py-1 rounded-lg border ${isPositive ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-red-500/10 border-red-500/20'
+          }`}>
           <TrendingUp className={`w-4 h-4 ${isPositive ? 'text-emerald-400' : 'text-red-400 rotate-180'}`} />
           <span className={`text-sm font-bold ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
             {isPositive ? '+' : ''}{((lastPrice - firstPrice) / firstPrice * 100).toFixed(2)}%
@@ -60,7 +59,7 @@ export const PriceChart = ({ chartData, symbol }: PriceChartProps) => {
               }}
               labelStyle={{ color: '#94a3b8', fontSize: '12px' }}
               itemStyle={{ color: '#3b82f6', fontSize: '14px', fontWeight: 'bold' }}
-              formatter={(value: number) => [`$${value.toFixed(2)}`, 'Price']}
+              formatter={(value?: number | string) => [`$${Number(value ?? 0).toFixed(2)}`, 'Price']}
             />
             <Area
               type="monotone"

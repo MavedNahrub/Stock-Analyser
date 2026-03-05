@@ -1,4 +1,5 @@
-import { DollarSign, TrendingUp, Building2, Percent } from 'lucide-react';
+import { DollarSign, TrendingUp, Building2, Percent, AlertCircle, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useStockData } from '../hooks/useStockData';
 import { SearchBar } from './SearchBar';
 import { StockHeader } from './StockHeader';
@@ -16,29 +17,50 @@ import {
 } from './SkeletonLoader';
 
 export const Dashboard = () => {
-  const { currentStock, isLoading, searchStock } = useStockData();
+  const { currentStock, isLoading, error, searchStock, clearError } = useStockData();
 
   return (
     <div className="flex-1 overflow-auto">
-      <div className="max-w-[1800px] mx-auto p-8">
+      <div className="max-w-[1800px] mx-auto p-4 sm:p-6 lg:p-8">
         <div className="mb-8">
           <SearchBar onSearch={searchStock} />
         </div>
 
+        {/* Error message */}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-center gap-3"
+            >
+              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+              <p className="text-sm text-red-300 flex-1">{error}</p>
+              <button
+                onClick={clearError}
+                className="p-1 hover:bg-red-500/20 rounded-lg transition-colors"
+              >
+                <X className="w-4 h-4 text-red-400" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {isLoading ? (
           <div className="space-y-6">
             <SkeletonCard />
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <SkeletonCard />
               <SkeletonCard />
               <SkeletonCard />
               <SkeletonCard />
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <SkeletonHealth />
               <SkeletonChart />
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <SkeletonSlider />
               <SkeletonGauge />
             </div>
@@ -47,7 +69,7 @@ export const Dashboard = () => {
           <div className="space-y-6">
             <StockHeader stock={currentStock} />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <MetricCard
                 title="P/E Ratio"
                 value={currentStock.fundamentals.peRatio.toFixed(2)}
@@ -82,7 +104,7 @@ export const Dashboard = () => {
               />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               <div className="lg:col-span-1">
                 <HealthChecklist healthMetrics={currentStock.healthMetrics} />
               </div>
@@ -91,7 +113,7 @@ export const Dashboard = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <IntrinsicValueSlider intrinsicValue={currentStock.intrinsicValue} />
               <RiskGauge risk={currentStock.risk} />
             </div>

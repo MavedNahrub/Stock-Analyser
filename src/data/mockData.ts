@@ -29,6 +29,30 @@ export interface StockData {
   chartData: Array<{ date: string; price: number }>;
 }
 
+function generateDailyData(basePrice: number, volatility: number, days: number): Array<{ date: string; price: number }> {
+  const data: Array<{ date: string; price: number }> = [];
+  let price = basePrice * (1 - volatility * 0.3);
+  const now = new Date();
+
+  for (let i = days; i >= 0; i--) {
+    const date = new Date(now);
+    date.setDate(date.getDate() - i);
+    const change = (Math.random() - 0.45) * volatility * basePrice * 0.02;
+    price = Math.max(price + change, basePrice * 0.7);
+    data.push({
+      date: date.toISOString().split('T')[0],
+      price: Math.round(price * 100) / 100,
+    });
+  }
+
+  // Ensure last point matches current price
+  if (data.length > 0) {
+    data[data.length - 1].price = basePrice;
+  }
+
+  return data;
+}
+
 export const mockStockData: Record<string, StockData> = {
   AAPL: {
     symbol: 'AAPL',
@@ -58,15 +82,7 @@ export const mockStockData: Record<string, StockData> = {
       maxDrawdown: -15.2,
       riskLevel: 'Low',
     },
-    chartData: [
-      { date: '2024-09', price: 165.2 },
-      { date: '2024-10', price: 168.5 },
-      { date: '2024-11', price: 172.3 },
-      { date: '2024-12', price: 175.8 },
-      { date: '2025-01', price: 171.4 },
-      { date: '2025-02', price: 174.9 },
-      { date: '2025-03', price: 178.45 },
-    ],
+    chartData: generateDailyData(178.45, 0.8, 30),
   },
   TSLA: {
     symbol: 'TSLA',
@@ -96,15 +112,7 @@ export const mockStockData: Record<string, StockData> = {
       maxDrawdown: -43.7,
       riskLevel: 'High',
     },
-    chartData: [
-      { date: '2024-09', price: 238.5 },
-      { date: '2024-10', price: 252.3 },
-      { date: '2024-11', price: 268.9 },
-      { date: '2024-12', price: 245.2 },
-      { date: '2025-01', price: 228.7 },
-      { date: '2025-02', price: 241.3 },
-      { date: '2025-03', price: 245.67 },
-    ],
+    chartData: generateDailyData(245.67, 1.5, 30),
   },
   MSFT: {
     symbol: 'MSFT',
@@ -134,14 +142,66 @@ export const mockStockData: Record<string, StockData> = {
       maxDrawdown: -18.5,
       riskLevel: 'Low',
     },
-    chartData: [
-      { date: '2024-09', price: 385.4 },
-      { date: '2024-10', price: 392.1 },
-      { date: '2024-11', price: 398.7 },
-      { date: '2024-12', price: 407.3 },
-      { date: '2025-01', price: 402.8 },
-      { date: '2025-02', price: 410.5 },
-      { date: '2025-03', price: 415.23 },
-    ],
+    chartData: generateDailyData(415.23, 0.6, 30),
+  },
+  GOOGL: {
+    symbol: 'GOOGL',
+    companyName: 'Alphabet Inc.',
+    currentPrice: 141.80,
+    change: 1.56,
+    changePercent: 1.11,
+    fundamentals: {
+      peRatio: 24.5,
+      pbRatio: 6.8,
+      marketCap: '$1.76T',
+      dividendYield: 0.0,
+    },
+    healthMetrics: {
+      revenueGrowth: { value: 13.5, isHealthy: true, label: 'Revenue Growth' },
+      profitMargin: { value: 25.7, isHealthy: true, label: 'Profit Margin' },
+      debtToEquity: { value: 0.1, isHealthy: true, label: 'Debt/Equity' },
+      roe: { value: 29.8, isHealthy: true, label: 'Return on Equity' },
+      currentRatio: { value: 2.1, isHealthy: true, label: 'Current Ratio' },
+    },
+    intrinsicValue: {
+      current: 141.80,
+      intrinsic: 155.0,
+      percentage: -8.5,
+    },
+    risk: {
+      maxDrawdown: -20.3,
+      riskLevel: 'Medium',
+    },
+    chartData: generateDailyData(141.80, 0.9, 30),
+  },
+  AMZN: {
+    symbol: 'AMZN',
+    companyName: 'Amazon.com, Inc.',
+    currentPrice: 178.25,
+    change: -0.87,
+    changePercent: -0.49,
+    fundamentals: {
+      peRatio: 58.3,
+      pbRatio: 8.4,
+      marketCap: '$1.86T',
+      dividendYield: 0.0,
+    },
+    healthMetrics: {
+      revenueGrowth: { value: 12.6, isHealthy: true, label: 'Revenue Growth' },
+      profitMargin: { value: 7.8, isHealthy: true, label: 'Profit Margin' },
+      debtToEquity: { value: 0.6, isHealthy: true, label: 'Debt/Equity' },
+      roe: { value: 22.4, isHealthy: true, label: 'Return on Equity' },
+      currentRatio: { value: 1.05, isHealthy: true, label: 'Current Ratio' },
+    },
+    intrinsicValue: {
+      current: 178.25,
+      intrinsic: 165.0,
+      percentage: 8.0,
+    },
+    risk: {
+      maxDrawdown: -25.1,
+      riskLevel: 'Medium',
+    },
+    chartData: generateDailyData(178.25, 1.1, 30),
   },
 };

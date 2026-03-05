@@ -1,5 +1,5 @@
 import { Search, Command } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 interface SearchBarProps {
@@ -9,8 +9,21 @@ interface SearchBarProps {
 export const SearchBar = ({ onSearch }: SearchBarProps) => {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const suggestions = ['AAPL', 'TSLA', 'MSFT', 'GOOGL', 'AMZN'];
+
+  // Ctrl+K / Cmd+K keyboard shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,21 +43,21 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
     <div className="relative">
       <form onSubmit={handleSubmit} className="relative">
         <div
-          className={`flex items-center gap-3 bg-slate-800/50 backdrop-blur-sm border rounded-xl px-4 py-3 transition-all ${
-            isFocused ? 'border-blue-500 shadow-lg shadow-blue-500/20' : 'border-slate-700/50'
-          }`}
+          className={`flex items-center gap-3 bg-slate-800/50 backdrop-blur-sm border rounded-xl px-4 py-3 transition-all ${isFocused ? 'border-blue-500 shadow-lg shadow-blue-500/20' : 'border-slate-700/50'
+            }`}
         >
           <Search className="w-5 h-5 text-slate-400" />
           <input
+            ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-            placeholder="Search stocks... (Try AAPL, TSLA, MSFT)"
+            placeholder="Search stocks... (Try AAPL, TSLA, MSFT, GOOGL, AMZN)"
             className="flex-1 bg-transparent text-white placeholder-slate-500 outline-none"
           />
-          <div className="flex items-center gap-1 text-xs text-slate-500">
+          <div className="hidden sm:flex items-center gap-1 text-xs text-slate-500 bg-slate-700/50 px-2 py-1 rounded-md">
             <Command className="w-3 h-3" />
             <span>K</span>
           </div>
@@ -76,6 +89,11 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
                   </div>
                 </button>
               ))}
+            {suggestions.filter((s) => s.toLowerCase().includes(query.toLowerCase())).length === 0 && (
+              <p className="px-3 py-2 text-sm text-slate-400">
+                Press Enter to search for <span className="text-white font-medium">"{query}"</span>
+              </p>
+            )}
           </div>
         </motion.div>
       )}
