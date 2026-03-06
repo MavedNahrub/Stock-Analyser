@@ -6,6 +6,7 @@ import stocksRouter from './routes/stocks.js';
 import portfolioRouter from './routes/portfolio.js';
 import alertsRouter from './routes/alerts.js';
 import searchRouter from './routes/search.js';
+import authRouter from './routes/auth.js';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use('/api/stocks', stocksRouter);
 app.use('/api/portfolio', portfolioRouter);
 app.use('/api/alerts', alertsRouter);
 app.use('/api/search', searchRouter);
+app.use('/api/auth', authRouter);
 
 // Health check
 app.get('/api/health', (_req, res) => {

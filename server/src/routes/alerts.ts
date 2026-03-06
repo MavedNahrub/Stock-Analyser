@@ -1,13 +1,15 @@
-import { Router } from 'express';
+import { Router, Response } from 'express';
 import pool from '../db.js';
+import { authenticateToken, AuthRequest } from '../middleware/auth.js';
 
 const router = Router();
 
-// GET /api/alerts — list all alerts
-router.get('/', async (_req, res) => {
+// GET /api/alerts — list all alerts for the user
+router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
         const result = await pool.query(
-            'SELECT * FROM alerts ORDER BY created_at DESC'
+            'SELECT * FROM alerts WHERE user_id = $1 ORDER BY created_at DESC',
+            [req.user?.id]
         );
         return res.json(result.rows);
     } catch (err: any) {
@@ -16,8 +18,8 @@ router.get('/', async (_req, res) => {
     }
 });
 
-// POST /api/alerts — create an alert
-router.post('/', async (req, res) => {
+// POST /api/alerts — create an alert for the user
+router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
     const { symbol, target_price, direction } = req.body;
 
     if (!symbol || !target_price || !direction) {
@@ -30,10 +32,10 @@ router.post('/', async (req, res) => {
 
     try {
         const result = await pool.query(
-            `INSERT INTO alerts (symbol, target_price, direction)
-       VALUES ($1, $2, $3)
-       RETURNING *`,
-            [symbol.toUpperCase(), target_price, direction]
+            `INSERT INTO alerts (user_id, symbol, target_price, direction)
+             VALUES ($1, $2, $3, $4)
+             RETURNING *`,
+            [req.user?.id, symbol.toUpperCase(), target_price, direction]
         );
         return res.status(201).json(result.rows[0]);
     } catch (err: any) {
@@ -43,16 +45,16 @@ router.post('/', async (req, res) => {
 });
 
 // DELETE /api/alerts/:id — delete an alert
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
 
     try {
         const result = await pool.query(
-            'DELETE FROM alerts WHERE id = $1 RETURNING *',
-            [id]
+            'DELETE FROM alerts WHERE id = $1 AND user_id = $2 RETURNING *',
+            [id, req.user?.id]
         );
         if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Alert not found' });
+            return res.status(404).json({ error: 'Alert not found or unauthorized' });
         }
         return res.json({ deleted: result.rows[0] });
     } catch (err: any) {

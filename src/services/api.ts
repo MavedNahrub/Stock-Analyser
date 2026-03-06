@@ -1,18 +1,54 @@
 const API_BASE = '/api';
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+    const token = localStorage.getItem('stockpulse_token');
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+    };
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const res = await fetch(`${API_BASE}${path}`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         ...options,
     });
 
     if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: res.statusText }));
+        let err;
+        try {
+            err = await res.json();
+        } catch (_) {
+            err = { error: res.statusText };
+        }
+
+        if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem('stockpulse_token');
+            window.dispatchEvent(new CustomEvent('auth:expired'));
+        }
+
         throw new Error(err.error || `Request failed: ${res.status}`);
     }
 
     return res.json();
 }
+
+// Auth API
+export interface User {
+    id: number;
+    email: string;
+    created_at?: string;
+}
+
+export const authApi = {
+    register: (email: string, password: string) =>
+        request<{ user: User; token: string }>('/auth/register', { method: 'POST', body: JSON.stringify({ email, password }) }),
+    login: (email: string, password: string) =>
+        request<{ user: User; token: string }>('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+    getMe: () =>
+        request<User>('/auth/me'),
+};
 
 // Stock API
 export const stocksApi = {

@@ -14,6 +14,7 @@ export async function runMigrations() {
     await client.query(`
       CREATE TABLE IF NOT EXISTS portfolio (
         id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         symbol VARCHAR(20) NOT NULL,
         company_name VARCHAR(255),
         quantity DECIMAL NOT NULL,
@@ -25,6 +26,7 @@ export async function runMigrations() {
     await client.query(`
       CREATE TABLE IF NOT EXISTS alerts (
         id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         symbol VARCHAR(20) NOT NULL,
         target_price DECIMAL NOT NULL,
         direction VARCHAR(5) NOT NULL CHECK (direction IN ('above', 'below')),
