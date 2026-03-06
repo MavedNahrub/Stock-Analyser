@@ -20,6 +20,19 @@ export const stocksApi = {
         request<{ source: string; data: any }>(`/stocks/${symbol.toUpperCase()}`),
 };
 
+// Search API (autocomplete)
+export interface SearchSuggestion {
+    symbol: string;
+    name: string;
+    exchange: string;
+    type: string;
+}
+
+export const searchApi = {
+    suggestions: (query: string) =>
+        request<SearchSuggestion[]>(`/search?q=${encodeURIComponent(query)}`),
+};
+
 // Portfolio API
 export interface PortfolioEntry {
     id: number;

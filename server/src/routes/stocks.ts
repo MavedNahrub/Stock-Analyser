@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import pool from '../db.js';
-import { fetchStockData } from '../services/alphaVantage.js';
+import { fetchStockData } from '../services/yahooFinance.js';
 
 const router = Router();
 
-// GET /api/stocks/:symbol — fetch stock data (cached or live)
+// GET /api/stocks/:symbol — fetch stock data (cached or live from Yahoo Finance)
 router.get('/:symbol', async (req, res) => {
     const symbol = req.params.symbol.toUpperCase();
 
@@ -25,16 +25,9 @@ router.get('/:symbol', async (req, res) => {
             });
         }
 
-        // Fetch from Alpha Vantage
-        const apiKey = process.env.ALPHA_VANTAGE_API_KEY;
-        if (!apiKey || apiKey === 'your_api_key_here') {
-            return res.status(400).json({
-                error: 'Alpha Vantage API key not configured. Set ALPHA_VANTAGE_API_KEY in server/.env',
-            });
-        }
-
-        console.log(`🌐 Fetching live data for ${symbol}...`);
-        const stockData = await fetchStockData(symbol, apiKey);
+        // Fetch from Yahoo Finance (no API key needed!)
+        console.log(`🌐 Fetching live data for ${symbol} from Yahoo Finance...`);
+        const stockData = await fetchStockData(symbol);
 
         // Cache the result (upsert)
         await pool.query(
