@@ -3,6 +3,16 @@ import pool from './db.js';
 export async function runMigrations() {
   const client = await pool.connect();
   try {
+    // Users table must be created first (referenced by portfolio & alerts)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
     await client.query(`
       CREATE TABLE IF NOT EXISTS stock_cache (
         symbol VARCHAR(20) PRIMARY KEY,
