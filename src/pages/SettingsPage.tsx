@@ -1,5 +1,5 @@
 import { Key, Info, Trash2, CheckCircle2, Sun, Moon } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
 const API_KEY_STORAGE = 'stockpulse_api_key';
@@ -14,6 +14,7 @@ export const SettingsPage = ({ theme, onToggleTheme }: SettingsPageProps) => {
     const [savedKey, setSavedKey] = useState('');
     const [showKey, setShowKey] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
         const stored = localStorage.getItem(API_KEY_STORAGE) || '';
@@ -29,13 +30,12 @@ export const SettingsPage = ({ theme, onToggleTheme }: SettingsPageProps) => {
     };
 
     const handleClearData = () => {
-        if (confirm('Clear all cached stock data, portfolio, and alerts? This cannot be undone.')) {
-            localStorage.removeItem('stockpulse_portfolio');
-            localStorage.removeItem('stockpulse_alerts');
-            localStorage.removeItem(API_KEY_STORAGE);
-            setApiKey('');
-            setSavedKey('');
-        }
+        localStorage.removeItem('stockpulse_portfolio');
+        localStorage.removeItem('stockpulse_alerts');
+        localStorage.removeItem(API_KEY_STORAGE);
+        setApiKey('');
+        setSavedKey('');
+        setShowConfirm(false);
     };
 
     const maskKey = (key: string) => {
@@ -150,12 +150,45 @@ export const SettingsPage = ({ theme, onToggleTheme }: SettingsPageProps) => {
                                 <p className="text-sm text-slate-400">Remove portfolio, alerts, and cached data</p>
                             </div>
                         </div>
-                        <button
-                            onClick={handleClearData}
-                            className="px-5 py-2.5 bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium rounded-xl hover:bg-red-500/20 transition-colors"
-                        >
-                            Clear All Data
-                        </button>
+
+                        <AnimatePresence mode="wait">
+                            {showConfirm ? (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mt-4 overflow-hidden"
+                                >
+                                    <p className="text-sm text-red-400 mb-4">
+                                        Are you sure? This will delete all your portfolio holdings, alerts, and API keys. This action cannot be undone.
+                                    </p>
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={handleClearData}
+                                            className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors"
+                                        >
+                                            Yes, Delete Everything
+                                        </button>
+                                        <button
+                                            onClick={() => setShowConfirm(false)}
+                                            className="px-4 py-2 bg-slate-700/50 text-slate-300 text-sm font-medium rounded-lg hover:bg-slate-700 transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <motion.button
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    onClick={() => setShowConfirm(true)}
+                                    className="px-5 py-2.5 bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium rounded-xl hover:bg-red-500/20 transition-colors"
+                                >
+                                    Clear All Data
+                                </motion.button>
+                            )}
+                        </AnimatePresence>
                     </motion.div>
 
                     {/* About */}

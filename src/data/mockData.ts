@@ -82,7 +82,7 @@ export const mockStockData: Record<string, StockData> = {
       maxDrawdown: -15.2,
       riskLevel: 'Low',
     },
-    chartData: generateDailyData(178.45, 0.8, 30),
+    chartData: generateDailyData(178.45, 0.8, 90),
   },
   TSLA: {
     symbol: 'TSLA',
@@ -112,7 +112,7 @@ export const mockStockData: Record<string, StockData> = {
       maxDrawdown: -43.7,
       riskLevel: 'High',
     },
-    chartData: generateDailyData(245.67, 1.5, 30),
+    chartData: generateDailyData(245.67, 1.5, 90),
   },
   MSFT: {
     symbol: 'MSFT',
@@ -142,7 +142,7 @@ export const mockStockData: Record<string, StockData> = {
       maxDrawdown: -18.5,
       riskLevel: 'Low',
     },
-    chartData: generateDailyData(415.23, 0.6, 30),
+    chartData: generateDailyData(415.23, 0.6, 90),
   },
   GOOGL: {
     symbol: 'GOOGL',
@@ -172,7 +172,7 @@ export const mockStockData: Record<string, StockData> = {
       maxDrawdown: -20.3,
       riskLevel: 'Medium',
     },
-    chartData: generateDailyData(141.80, 0.9, 30),
+    chartData: generateDailyData(141.80, 0.9, 90),
   },
   AMZN: {
     symbol: 'AMZN',
@@ -202,6 +202,6 @@ export const mockStockData: Record<string, StockData> = {
       maxDrawdown: -25.1,
       riskLevel: 'Medium',
     },
-    chartData: generateDailyData(178.25, 1.1, 30),
+    chartData: generateDailyData(178.25, 1.1, 90),
   },
 };

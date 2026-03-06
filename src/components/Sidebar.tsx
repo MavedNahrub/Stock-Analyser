@@ -64,16 +64,6 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           ))}
         </ul>
       </nav>
-
-      <div className="p-4 border-t border-slate-700/50">
-        <div className="bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-lg p-4">
-          <p className="text-sm font-semibold text-white mb-1">Upgrade to Pro+</p>
-          <p className="text-xs text-slate-400 mb-3">Get real-time data & alerts</p>
-          <button className="w-full bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-sm font-medium py-2 rounded-lg hover:opacity-90 transition-opacity">
-            Upgrade Now
-          </button>
-        </div>
-      </div>
     </aside>
   );
 };

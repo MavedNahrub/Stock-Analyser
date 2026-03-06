@@ -26,22 +26,20 @@ export const RiskGauge = ({ risk }: RiskGaugeProps) => {
           <p className="text-sm text-slate-400">Maximum Drawdown Analysis</p>
         </div>
         <div
-          className={`px-3 py-1 rounded-lg border ${
-            risk.riskLevel === 'Low'
+          className={`px-3 py-1 rounded-lg border ${risk.riskLevel === 'Low'
               ? 'bg-emerald-500/10 border-emerald-500/20'
               : risk.riskLevel === 'Medium'
-              ? 'bg-yellow-500/10 border-yellow-500/20'
-              : 'bg-red-500/10 border-red-500/20'
-          }`}
+                ? 'bg-yellow-500/10 border-yellow-500/20'
+                : 'bg-red-500/10 border-red-500/20'
+            }`}
         >
           <span
-            className={`text-sm font-bold ${
-              risk.riskLevel === 'Low'
+            className={`text-sm font-bold ${risk.riskLevel === 'Low'
                 ? 'text-emerald-400'
                 : risk.riskLevel === 'Medium'
-                ? 'text-yellow-400'
-                : 'text-red-400'
-            }`}
+                  ? 'text-yellow-400'
+                  : 'text-red-400'
+              }`}
           >
             {risk.riskLevel}
           </span>
@@ -76,46 +74,46 @@ export const RiskGauge = ({ risk }: RiskGaugeProps) => {
               opacity="0.3"
             />
 
-            <motion.line
-              x1="100"
-              y1="90"
-              x2="100"
-              y2="30"
-              stroke={`rgb(${
-                risk.riskLevel === 'Low' ? '52, 211, 153' : risk.riskLevel === 'Medium' ? '250, 204, 21' : '248, 113, 113'
-              })`}
-              strokeWidth="3"
-              strokeLinecap="round"
+            <motion.g
               initial={{ rotate: -90 }}
               animate={{ rotate: angle - 90 }}
               transition={{ type: 'spring', stiffness: 50, damping: 20 }}
-              style={{ originX: '100px', originY: '90px' }}
-            />
+              style={{ originX: "100px", originY: "90px" }}
+            >
+              <line
+                x1="100"
+                y1="90"
+                x2="100"
+                y2="30"
+                stroke={`rgb(${risk.riskLevel === 'Low' ? '52, 211, 153' : risk.riskLevel === 'Medium' ? '250, 204, 21' : '248, 113, 113'
+                  })`}
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
 
-            <motion.circle
-              cx="100"
-              cy="90"
-              r="8"
-              fill={`rgb(${
-                risk.riskLevel === 'Low' ? '52, 211, 153' : risk.riskLevel === 'Medium' ? '250, 204, 21' : '248, 113, 113'
-              })`}
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              style={{ filter: `drop-shadow(0 0 8px ${riskColor.glow})` }}
-            />
+              <motion.circle
+                cx="100"
+                cy="90"
+                r="8"
+                fill={`rgb(${risk.riskLevel === 'Low' ? '52, 211, 153' : risk.riskLevel === 'Medium' ? '250, 204, 21' : '248, 113, 113'
+                  })`}
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                style={{ filter: `drop-shadow(0 0 8px ${riskColor.glow})` }}
+              />
+            </motion.g>
           </svg>
         </div>
 
         <div className="mt-6 text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <AlertTriangle
-              className={`w-5 h-5 ${
-                risk.riskLevel === 'Low'
+              className={`w-5 h-5 ${risk.riskLevel === 'Low'
                   ? 'text-emerald-400'
                   : risk.riskLevel === 'Medium'
-                  ? 'text-yellow-400'
-                  : 'text-red-400'
-              }`}
+                    ? 'text-yellow-400'
+                    : 'text-red-400'
+                }`}
             />
             <p className="text-3xl font-bold text-white">{Math.abs(risk.maxDrawdown).toFixed(1)}%</p>
           </div>
@@ -127,13 +125,12 @@ export const RiskGauge = ({ risk }: RiskGaugeProps) => {
             <div>
               <p className="text-xs text-slate-500 mb-1">Risk Level</p>
               <p
-                className={`text-sm font-bold ${
-                  risk.riskLevel === 'Low'
+                className={`text-sm font-bold ${risk.riskLevel === 'Low'
                     ? 'text-emerald-400'
                     : risk.riskLevel === 'Medium'
-                    ? 'text-yellow-400'
-                    : 'text-red-400'
-                }`}
+                      ? 'text-yellow-400'
+                      : 'text-red-400'
+                  }`}
               >
                 {risk.riskLevel}
               </p>

@@ -1,5 +1,7 @@
-import { DollarSign, TrendingUp, Building2, Percent, AlertCircle, X } from 'lucide-react';
+import { DollarSign, TrendingUp, Building2, Percent, AlertCircle, X, Search as SearchIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useStockData } from '../hooks/useStockData';
 import { SearchBar } from './SearchBar';
 import { StockHeader } from './StockHeader';
@@ -17,7 +19,18 @@ import {
 } from './SkeletonLoader';
 
 export const Dashboard = () => {
-  const { currentStock, isLoading, error, searchStock, clearError } = useStockData();
+  const { currentStock, isLoading, error, hasSearched, searchStock, clearError } = useStockData();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const symbolParam = searchParams.get('symbol');
+    if (symbolParam) {
+      searchStock(symbolParam);
+      // Clean up the URL after searching
+      navigate('/', { replace: true });
+    }
+  }, [searchParams, searchStock, navigate]);
 
   return (
     <div className="flex-1 overflow-auto">
@@ -65,6 +78,32 @@ export const Dashboard = () => {
               <SkeletonGauge />
             </div>
           </div>
+        ) : !hasSearched ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center py-20 text-center"
+          >
+            <div className="w-20 h-20 bg-blue-500/10 border border-blue-500/20 rounded-full flex items-center justify-center mb-6">
+              <SearchIcon className="w-10 h-10 text-blue-400" />
+            </div>
+            <h2 className="text-3xl font-bold text-white mb-4">Welcome to StockPulse</h2>
+            <p className="text-slate-400 max-w-md mx-auto mb-8">
+              Search for any stock symbol to view comprehensive fundamental analysis, intrinsic valuation, and risk metrics.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <span className="text-sm text-slate-500">Try searching for:</span>
+              {['AAPL', 'TSLA', 'MSFT'].map(sym => (
+                <button
+                  key={sym}
+                  onClick={() => searchStock(sym)}
+                  className="px-3 py-1 bg-slate-800 border border-slate-700 rounded-full text-sm text-blue-400 hover:bg-slate-700 transition"
+                >
+                  {sym}
+                </button>
+              ))}
+            </div>
+          </motion.div>
         ) : (
           <div className="space-y-6">
             <StockHeader stock={currentStock} />

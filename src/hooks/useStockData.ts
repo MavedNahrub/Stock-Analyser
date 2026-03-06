@@ -6,6 +6,7 @@ export const useStockData = () => {
   const [currentStock, setCurrentStock] = useState<StockData>(mockStockData.AAPL);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const searchStock = useCallback(async (symbol: string) => {
     setIsLoading(true);
@@ -17,21 +18,36 @@ export const useStockData = () => {
       if (response.data) {
         setCurrentStock(response.data as StockData);
         setIsLoading(false);
+        setHasSearched(true);
         return;
       }
-    } catch {
-      // Backend not available or API not configured — fall back to mock data
+    } catch (err: any) {
+      // If the error has a message from the backend, show it directly
+      const backendMsg: string = err?.message || '';
+
+      // Network error = backend not running → try mock data
+      const isNetworkError = backendMsg.includes('Failed to fetch') || backendMsg.includes('NetworkError') || backendMsg.includes('ECONNREFUSED');
+
+      if (!isNetworkError) {
+        // Backend returned a real error (e.g. symbol not found, rate limited)
+        setError(`Could not load "${symbol.toUpperCase()}": ${backendMsg}`);
+        setIsLoading(false);
+        return;
+      }
+
+      // Backend not available — fall back to mock data silently
       console.log('Backend unavailable, using mock data');
     }
 
-    // Fallback to mock data
+    // Fallback to mock data (only reached if backend is unreachable)
     setTimeout(() => {
       const stockData = mockStockData[symbol.toUpperCase()];
       if (stockData) {
         setCurrentStock(stockData);
         setError(null);
+        setHasSearched(true);
       } else {
-        setError(`Stock symbol "${symbol.toUpperCase()}" not found. Try AAPL, TSLA, MSFT, GOOGL, or AMZN.`);
+        setError(`Stock "${symbol.toUpperCase()}" not found. With the backend offline, only AAPL, TSLA, MSFT, GOOGL, and AMZN are available as demo data.`);
       }
       setIsLoading(false);
     }, 300);
@@ -45,6 +61,7 @@ export const useStockData = () => {
     currentStock,
     isLoading,
     error,
+    hasSearched,
     searchStock,
     clearError,
   };

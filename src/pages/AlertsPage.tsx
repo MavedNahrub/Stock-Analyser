@@ -18,9 +18,15 @@ export const AlertsPage = () => {
         try {
             const data = await alertsApi.getAll();
             setAlerts(data);
+            localStorage.setItem('stockpulse_alerts', JSON.stringify(data));
         } catch {
-            console.log('Backend unavailable, alerts empty');
-            setAlerts([]);
+            console.log('Backend unavailable, trying offline cache');
+            const cached = localStorage.getItem('stockpulse_alerts');
+            if (cached) {
+                setAlerts(JSON.parse(cached));
+            } else {
+                setAlerts([]);
+            }
         } finally {
             setLoading(false);
         }
@@ -53,7 +59,11 @@ export const AlertsPage = () => {
                 target_price: price,
                 direction: formDirection,
             });
-            setAlerts((prev) => [newAlert, ...prev]);
+            setAlerts((prev) => {
+                const updated = [newAlert, ...prev];
+                localStorage.setItem('stockpulse_alerts', JSON.stringify(updated));
+                return updated;
+            });
             setFormSymbol('');
             setFormPrice('');
             setFormError('');
@@ -68,7 +78,11 @@ export const AlertsPage = () => {
     const handleDelete = async (id: number) => {
         try {
             await alertsApi.remove(id);
-            setAlerts((prev) => prev.filter((a) => a.id !== id));
+            setAlerts((prev) => {
+                const updated = prev.filter((a) => a.id !== id);
+                localStorage.setItem('stockpulse_alerts', JSON.stringify(updated));
+                return updated;
+            });
         } catch (err) {
             console.error('Failed to delete:', err);
         }
@@ -146,8 +160,8 @@ export const AlertsPage = () => {
                                             <button type="button"
                                                 onClick={() => setFormDirection('above')}
                                                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${formDirection === 'above'
-                                                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                                                        : 'bg-slate-700/50 border-slate-600/50 text-slate-400 hover:text-white'
+                                                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                                                    : 'bg-slate-700/50 border-slate-600/50 text-slate-400 hover:text-white'
                                                     }`}
                                             >
                                                 <ArrowUp className="w-4 h-4" /> Above
@@ -155,8 +169,8 @@ export const AlertsPage = () => {
                                             <button type="button"
                                                 onClick={() => setFormDirection('below')}
                                                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${formDirection === 'below'
-                                                        ? 'bg-red-500/10 border-red-500/30 text-red-400'
-                                                        : 'bg-slate-700/50 border-slate-600/50 text-slate-400 hover:text-white'
+                                                    ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                                                    : 'bg-slate-700/50 border-slate-600/50 text-slate-400 hover:text-white'
                                                     }`}
                                             >
                                                 <ArrowDown className="w-4 h-4" /> Below

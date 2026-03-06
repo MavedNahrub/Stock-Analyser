@@ -14,7 +14,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-slate-900 flex">
+      <div className={`min-h-screen ${theme === 'light' ? 'bg-slate-50' : 'bg-slate-900'} flex`}>
         {/* Mobile overlay */}
         {sidebarOpen && (
           <div
