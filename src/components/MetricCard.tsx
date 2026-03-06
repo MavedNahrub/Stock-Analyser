@@ -1,4 +1,4 @@
-import { Video as LucideIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface MetricCardProps {
